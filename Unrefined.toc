@@ -1,0 +1,13 @@
+## Interface: 120100
+## Title: Unrefined
+## Notes: Makes your character burp, fart, pick their nose, and more, at random intervals.
+## Author: ajh1138
+## Version: 1.0.0
+## SavedVariablesPerCharacter: UnrefinedDB
+## IconTexture: Interface/Icons/INV_Pig
+## X-Category: Fun
+## Category-enUS: Fun
+
+Core.lua
+Options.lua
+Slash.lua
