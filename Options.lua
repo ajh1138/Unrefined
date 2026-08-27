@@ -39,8 +39,9 @@ function ns.BuildOptionsPanel()
     local panel = CreateFrame("Frame")
     panel.name = "Unrefined"
 
-    -- Shared column spacing for every 2-column checkbox row on this panel.
-    local COLUMN_WIDTH = 160
+    -- Shared column spacing for every 2-column checkbox row on this panel, so column 2
+    -- lines up at the same x position on every row regardless of that row's labels.
+    local COLUMN_WIDTH = 220
 
     local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 16, -16)
@@ -64,10 +65,7 @@ function ns.BuildOptionsPanel()
         UnrefinedDB.emoteOnZoneChange = self:GetChecked() and true or false
     end)
 
-    -- Combat and Dungeons/Raids stack in column 1; PvP sits alone in column 2, since these
-    -- labels are long enough that the standard COLUMN_WIDTH would make them overlap.
-    local CONDITION_COLUMN_WIDTH = 220
-
+    -- Combat and Dungeons/Raids stack in column 1; PvP sits alone in column 2.
     local combatCheck = CreateCheckbox(panel, "Allow During Combat", "Allow emotes to trigger while you are in combat.")
     combatCheck:SetPoint("TOPLEFT", enabledCheck, "BOTTOMLEFT", 0, -20)
     combatCheck:SetScript("OnClick", function(self)
@@ -81,7 +79,7 @@ function ns.BuildOptionsPanel()
     end)
 
     local pvpCheck = CreateCheckbox(panel, "Allow in Battlegrounds/Arenas", "Allow emotes to trigger while inside a battleground or arena.")
-    pvpCheck:SetPoint("TOPLEFT", enabledCheck, "BOTTOMLEFT", CONDITION_COLUMN_WIDTH, -20)
+    pvpCheck:SetPoint("TOPLEFT", enabledCheck, "BOTTOMLEFT", COLUMN_WIDTH, -20)
     pvpCheck:SetScript("OnClick", function(self)
         UnrefinedDB.allowInPvP = self:GetChecked() and true or false
     end)

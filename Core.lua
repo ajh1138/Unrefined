@@ -18,10 +18,11 @@ ns.EMOTE_TOKENS = {
     bonk = "BONK",
     chicken = "CHICKEN",
     shifty = "SHIFTY",
+    cough = "COUGH",
 }
 ns.EMOTE_ORDER = {
     "burp", "fart", "picknose", "moon", "spit", "rude", "drool", "scratch",
-    "gag", "lick", "squeal", "sniff", "snort", "bonk", "chicken", "shifty",
+    "gag", "lick", "squeal", "sniff", "snort", "bonk", "chicken", "shifty", "cough",
 }
 ns.EMOTE_LABELS = {
     burp = "Burp",
@@ -40,6 +41,7 @@ ns.EMOTE_LABELS = {
     bonk = "Bonk",
     chicken = "Chicken",
     shifty = "Shifty",
+    cough = "Cough",
 }
 -- Maps a slash-command word to its internal emote key, for the handful that don't match directly.
 ns.EMOTE_ALIASES = { nose = "picknose" }
@@ -50,7 +52,7 @@ local defaults = {
         burp = true, fart = true, picknose = true, moon = true,
         spit = true, rude = true, drool = true, scratch = true,
         gag = true, lick = true, squeal = true, sniff = true,
-        snort = true, bonk = true, chicken = true, shifty = true,
+        snort = true, bonk = true, chicken = true, shifty = true, cough = true,
     },
     minMinutes = 5,
     maxMinutes = 7,

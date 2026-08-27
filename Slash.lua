@@ -45,7 +45,7 @@ end
 local function ShowHelp()
     Print("Commands:")
     Print("/urf on|off - enable or disable the addon")
-    Print("/urf <emote> on|off - toggle one emote: burp, fart, nose, moon, spit, rude, drool, scratch, gag, lick, squeal, sniff, snort, bonk, chicken, shifty")
+    Print("/urf <emote> on|off - toggle one emote: burp, fart, nose, moon, spit, rude, drool, scratch, gag, lick, squeal, sniff, snort, bonk, chicken, shifty, cough")
     Print("/urf combat on|off - allow or disallow emotes during combat")
     Print("/urf dungeons on|off - allow or disallow emotes in dungeons and raids")
     Print("/urf pvp on|off - allow or disallow emotes in battlegrounds and arenas")
