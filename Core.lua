@@ -4,13 +4,12 @@ local addonName, ns = ...
 ns.EMOTE_TOKENS = {
     burp = "BURP",
     fart = "FART",
-    picknose = "PICKNOSE",
+    picknose = "PICK",
     moon = "MOON",
     spit = "SPIT",
     rude = "RUDE",
     drool = "DROOL",
     scratch = "SCRATCH",
-    gag = "GAG",
     lick = "LICK",
     squeal = "SQUEAL",
     sniff = "SNIFF",
@@ -19,10 +18,12 @@ ns.EMOTE_TOKENS = {
     chicken = "CHICKEN",
     shifty = "SHIFTY",
     cough = "COUGH",
+    cackle = "CACKLE",
+    mock = "MOCK",
 }
 ns.EMOTE_ORDER = {
     "burp", "fart", "picknose", "moon", "spit", "rude", "drool", "scratch",
-    "gag", "lick", "squeal", "sniff", "snort", "bonk", "chicken", "shifty", "cough",
+    "lick", "squeal", "sniff", "snort", "bonk", "chicken", "shifty", "cough", "cackle", "mock",
 }
 ns.EMOTE_LABELS = {
     burp = "Burp",
@@ -33,7 +34,6 @@ ns.EMOTE_LABELS = {
     rude = "Rude Gesture",
     drool = "Drool",
     scratch = "Scratch",
-    gag = "Gag",
     lick = "Lick",
     squeal = "Squeal",
     sniff = "Sniff",
@@ -42,6 +42,8 @@ ns.EMOTE_LABELS = {
     chicken = "Chicken",
     shifty = "Shifty",
     cough = "Cough",
+    cackle = "Cackle",
+    mock = "Mock",
 }
 -- Maps a slash-command word to its internal emote key, for the handful that don't match directly.
 ns.EMOTE_ALIASES = { nose = "picknose" }
@@ -51,8 +53,9 @@ local defaults = {
     emotes = {
         burp = true, fart = true, picknose = true, moon = true,
         spit = true, rude = true, drool = true, scratch = true,
-        gag = true, lick = true, squeal = true, sniff = true,
+        lick = true, squeal = true, sniff = true,
         snort = true, bonk = true, chicken = true, shifty = true, cough = true,
+        cackle = true, mock = true,
     },
     minMinutes = 5,
     maxMinutes = 7,
@@ -113,23 +116,52 @@ local function EnabledEmoteList()
     return list
 end
 
--- Avoids immediately repeating the same emote when another enabled choice exists.
+-- Shuffle-bag randomization: drains a shuffled queue of the currently-enabled emotes so
+-- every one gets used equally often over time, then reshuffles once the bag runs dry.
+-- Plain uniform-random picking can cluster (the same emote popping up 3 times in 5 picks
+-- while another rarely shows), which a bag avoids.
+local bag = {}
 local lastEmoteKey
 
-local function PickEmote(list)
-    if #list == 1 or not lastEmoteKey then
-        return list[math.random(#list)]
+local function ShuffleBag(list)
+    local shuffled = {}
+    for i, key in ipairs(list) do
+        shuffled[i] = key
     end
-    local candidates = {}
+    for i = #shuffled, 2, -1 do
+        local j = math.random(i)
+        shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+    end
+    -- table.remove(bag) below pops from the end, so the last slot is drawn first;
+    -- swap it out if it matches the previous pick, to avoid a repeat at the bag seam.
+    local n = #shuffled
+    if lastEmoteKey and n > 1 and shuffled[n] == lastEmoteKey then
+        local swapWith = math.random(n - 1)
+        shuffled[n], shuffled[swapWith] = shuffled[swapWith], shuffled[n]
+    end
+    return shuffled
+end
+
+local function PickEmote(list)
+    -- The enabled set may have changed since the bag was filled (an emote toggled
+    -- mid-bag), so drop anything no longer valid before drawing.
+    local enabledSet = {}
     for _, key in ipairs(list) do
-        if key ~= lastEmoteKey then
-            table.insert(candidates, key)
+        enabledSet[key] = true
+    end
+    for i = #bag, 1, -1 do
+        if not enabledSet[bag[i]] then
+            table.remove(bag, i)
         end
     end
-    if #candidates == 0 then
-        candidates = list
+
+    if #bag == 0 then
+        bag = ShuffleBag(list)
     end
-    return candidates[math.random(#candidates)]
+
+    local pick = table.remove(bag)
+    lastEmoteKey = pick
+    return pick
 end
 
 local activeTimer
@@ -182,7 +214,6 @@ local function DoRandomEmote()
     local list = EnabledEmoteList()
     if #list > 0 then
         local pick = PickEmote(list)
-        lastEmoteKey = pick
         pcall(DoEmote, ns.EMOTE_TOKENS[pick])
     end
 end
