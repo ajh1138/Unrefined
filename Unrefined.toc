@@ -2,7 +2,9 @@
 ## Title: Unrefined
 ## Notes: Makes your character burp, fart, pick their nose, and more, at random intervals.
 ## Author: ajh1138
-## Version: 1.0.0
+## Version: 12.01.00-02
+## X-Website: https://www.curseforge.com/wow/addons/unrefined
+## X-Curse-Project-ID: 1670891
 ## SavedVariablesPerCharacter: UnrefinedDB
 ## IconTexture: Interface/Icons/INV_Pig
 ## X-Category: Fun
