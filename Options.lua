@@ -65,7 +65,7 @@ function ns.BuildOptionsPanel()
         UnrefinedDB.emoteOnZoneChange = self:GetChecked() and true or false
     end)
 
-    -- Combat and Dungeons/Raids stack in column 1; PvP sits alone in column 2.
+    -- Combat and Dungeons/Raids stack in column 1; PvP and player-targeted stack in column 2.
     local combatCheck = CreateCheckbox(panel, "Allow During Combat", "Allow emotes to trigger while you are in combat.")
     combatCheck:SetPoint("TOPLEFT", enabledCheck, "BOTTOMLEFT", 0, -20)
     combatCheck:SetScript("OnClick", function(self)
@@ -84,10 +84,17 @@ function ns.BuildOptionsPanel()
         UnrefinedDB.allowInPvP = self:GetChecked() and true or false
     end)
 
+    local targetCheck = CreateCheckbox(panel, "Allow While Targeting a Player", "Allow emotes to trigger while you have another player character targeted.")
+    targetCheck:SetPoint("TOPLEFT", pvpCheck, "BOTTOMLEFT", 0, -8)
+    targetCheck:SetScript("OnClick", function(self)
+        UnrefinedDB.allowWhilePlayerTargeted = self:GetChecked() and true or false
+    end)
+
     local conditionChecks = {
         allowInCombat = combatCheck,
         allowInDungeons = dungeonCheck,
         allowInPvP = pvpCheck,
+        allowWhilePlayerTargeted = targetCheck,
     }
 
     local intervalHeader = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")

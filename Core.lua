@@ -63,6 +63,7 @@ local defaults = {
     allowInDungeons = true,
     allowInPvP = false,
     emoteOnZoneChange = false,
+    allowWhilePlayerTargeted = false,
 }
 
 -- Fills in any missing keys in UnrefinedDB from defaults without clobbering saved values.
@@ -206,6 +207,10 @@ local function CanEmoteNow()
     if inCombat and not UnrefinedDB.allowInCombat then return false end
 
     if UnitIsDeadOrGhost("player") then return false end
+
+    if UnitExists("target") and UnitIsPlayer("target") and not UnrefinedDB.allowWhilePlayerTargeted then
+        return false
+    end
 
     return true
 end

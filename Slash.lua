@@ -19,6 +19,7 @@ local function PrintStatus()
     Print(("Allowed in dungeons/raids: %s"):format(db.allowInDungeons and "Yes" or "No"))
     Print(("Allowed in battlegrounds/arenas: %s"):format(db.allowInPvP and "Yes" or "No"))
     Print(("Emote on zone change: %s"):format(db.emoteOnZoneChange and "On" or "Off"))
+    Print(("Allowed while targeting a player: %s"):format(db.allowWhilePlayerTargeted and "Yes" or "No"))
 end
 
 local function PrintNext()
@@ -50,6 +51,7 @@ local function ShowHelp()
     Print("/urf dungeons on|off - allow or disallow emotes in dungeons and raids")
     Print("/urf pvp on|off - allow or disallow emotes in battlegrounds and arenas")
     Print("/urf zone on|off - also trigger an emote whenever you enter a new zone")
+    Print("/urf target on|off - allow or disallow emotes while you have a player targeted")
     Print("/urf interval <min> <max> - set the random interval range in minutes (1-30)")
     Print("/urf status - show current settings")
     Print("/urf next - show time until the next check")
@@ -120,6 +122,14 @@ SlashCmdList["UNREFINED"] = function(msg)
         else
             db.emoteOnZoneChange = val
             Print(("Emote on zone change %s."):format(val and "enabled" or "disabled"))
+        end
+    elseif cmd == "target" or cmd == "targeting" then
+        local val = ParseOnOff(rest)
+        if val == nil then
+            Print("Usage: /urf target on|off")
+        else
+            db.allowWhilePlayerTargeted = val
+            Print(("Emotes while targeting a player %s."):format(val and "allowed" or "disallowed"))
         end
     elseif cmd == "interval" then
         local a, b = rest:match("^(%S+)%s+(%S+)$")
