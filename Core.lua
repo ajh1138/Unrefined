@@ -1,10 +1,15 @@
 local addonName, ns = ...
 
+local PREFIX = "|cff33ff99Unrefined|r: "
+function ns.Print(msg)
+    DEFAULT_CHAT_FRAME:AddMessage(PREFIX .. msg)
+end
+
 -- Emote tokens accepted by DoEmote(), keyed by our internal setting names.
 ns.EMOTE_TOKENS = {
     burp = "BURP",
     fart = "FART",
-    picknose = "PICK",
+    picknose = "NOSEPICK",
     moon = "MOON",
     spit = "SPIT",
     rude = "RUDE",
@@ -20,10 +25,13 @@ ns.EMOTE_TOKENS = {
     cough = "COUGH",
     cackle = "CACKLE",
     mock = "MOCK",
+    smack = "SMACK",
+    poke = "POKE",
+    snub = "SNUB",
 }
 ns.EMOTE_ORDER = {
     "burp", "fart", "picknose", "moon", "spit", "rude", "drool", "scratch",
-    "lick", "squeal", "sniff", "snort", "bonk", "chicken", "shifty", "cough", "cackle", "mock",
+    "lick", "squeal", "sniff", "snort", "bonk", "chicken", "shifty", "cough", "cackle", "mock", "smack", "poke", "snub",
 }
 ns.EMOTE_LABELS = {
     burp = "Burp",
@@ -44,6 +52,9 @@ ns.EMOTE_LABELS = {
     cough = "Cough",
     cackle = "Cackle",
     mock = "Mock",
+    smack = "Smack",
+    poke = "Poke",
+    snub = "Snub",
 }
 -- Maps a slash-command word to its internal emote key, for the handful that don't match directly.
 ns.EMOTE_ALIASES = { nose = "picknose" }
@@ -55,7 +66,7 @@ local defaults = {
         spit = true, rude = true, drool = true, scratch = true,
         lick = true, squeal = true, sniff = true,
         snort = true, bonk = true, chicken = true, shifty = true, cough = true,
-        cackle = true, mock = true,
+        cackle = true, mock = true, smack = true, poke = true, snub = true,
     },
     minMinutes = 5,
     maxMinutes = 7,
@@ -64,6 +75,7 @@ local defaults = {
     allowInPvP = false,
     emoteOnZoneChange = false,
     allowWhilePlayerTargeted = false,
+    debug = false,
 }
 
 -- Fills in any missing keys in UnrefinedDB from defaults without clobbering saved values.
@@ -219,7 +231,15 @@ local function DoRandomEmote()
     local list = EnabledEmoteList()
     if #list > 0 then
         local pick = PickEmote(list)
-        pcall(DoEmote, ns.EMOTE_TOKENS[pick])
+        local token = ns.EMOTE_TOKENS[pick]
+        local ok, err = pcall(DoEmote, token)
+        if UnrefinedDB.debug then
+            if ok then
+                ns.Print(("debug: picked %s (token %s)"):format(ns.EMOTE_LABELS[pick], token))
+            else
+                ns.Print(("debug: %s (token %s) FAILED: %s"):format(ns.EMOTE_LABELS[pick], token, tostring(err)))
+            end
+        end
     end
 end
 

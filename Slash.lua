@@ -1,10 +1,6 @@
 local addonName, ns = ...
 
-local PREFIX = "|cff33ff99Unrefined|r: "
-
-local function Print(msg)
-    DEFAULT_CHAT_FRAME:AddMessage(PREFIX .. msg)
-end
+local Print = ns.Print
 
 local function PrintStatus()
     local db = UnrefinedDB
@@ -20,6 +16,7 @@ local function PrintStatus()
     Print(("Allowed in battlegrounds/arenas: %s"):format(db.allowInPvP and "Yes" or "No"))
     Print(("Emote on zone change: %s"):format(db.emoteOnZoneChange and "On" or "Off"))
     Print(("Allowed while targeting a player: %s"):format(db.allowWhilePlayerTargeted and "Yes" or "No"))
+    Print(("Debug mode: %s"):format(db.debug and "On" or "Off"))
 end
 
 local function PrintNext()
@@ -46,13 +43,14 @@ end
 local function ShowHelp()
     Print("Commands:")
     Print("/urf on|off - enable or disable the addon")
-    Print("/urf <emote> on|off - toggle one emote: burp, fart, nose, moon, spit, rude, drool, scratch, lick, squeal, sniff, snort, bonk, chicken, shifty, cough, cackle, mock")
+    Print("/urf <emote> on|off - toggle one emote: burp, fart, nose, moon, spit, rude, drool, scratch, lick, squeal, sniff, snort, bonk, chicken, shifty, cough, cackle, mock, smack, poke, snub")
     Print("/urf combat on|off - allow or disallow emotes during combat")
     Print("/urf dungeons on|off - allow or disallow emotes in dungeons and raids")
     Print("/urf pvp on|off - allow or disallow emotes in battlegrounds and arenas")
     Print("/urf zone on|off - also trigger an emote whenever you enter a new zone")
     Print("/urf target on|off - allow or disallow emotes while you have a player targeted")
     Print("/urf interval <min> <max> - set the random interval range in minutes (1-30)")
+    Print("/urf debug on|off - print which emote gets picked (and whether it fired) in chat")
     Print("/urf status - show current settings")
     Print("/urf next - show time until the next check")
     Print("/urf config - open the options panel")
@@ -130,6 +128,14 @@ SlashCmdList["UNREFINED"] = function(msg)
         else
             db.allowWhilePlayerTargeted = val
             Print(("Emotes while targeting a player %s."):format(val and "allowed" or "disallowed"))
+        end
+    elseif cmd == "debug" then
+        local val = ParseOnOff(rest)
+        if val == nil then
+            Print("Usage: /urf debug on|off")
+        else
+            db.debug = val
+            Print(("Debug mode %s."):format(val and "enabled" or "disabled"))
         end
     elseif cmd == "interval" then
         local a, b = rest:match("^(%S+)%s+(%S+)$")
