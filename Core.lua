@@ -29,9 +29,11 @@ ns.EMOTE_TOKENS = {
     poke = "POKE",
     snub = "SNUB",
 }
+-- Alphabetical by display label (see EMOTE_LABELS below), since this drives the order
+-- checkboxes appear in on the options panel (and the order /urf status lists them in).
 ns.EMOTE_ORDER = {
-    "burp", "fart", "picknose", "moon", "spit", "rude", "drool", "scratch",
-    "lick", "squeal", "sniff", "snort", "bonk", "chicken", "shifty", "cough", "cackle", "mock", "smack", "poke", "snub",
+    "bonk", "burp", "cackle", "chicken", "cough", "drool", "fart", "lick", "mock", "moon",
+    "picknose", "poke", "rude", "scratch", "shifty", "smack", "sniff", "snort", "snub", "spit", "squeal",
 }
 ns.EMOTE_LABELS = {
     burp = "Burp",
@@ -108,6 +110,15 @@ end
 local function IsInPvPInstance()
     local inInstance, instanceType = IsInInstance()
     return inInstance and (instanceType == "pvp" or instanceType == "arena")
+end
+
+-- True while channeling the Fishing spell (spell ID 7620, same regardless of pole equipped).
+local FISHING_SPELL_ID = 7620
+local function IsFishing()
+    local channelName = UnitChannelInfo("player")
+    if not channelName then return false end
+    local info = C_Spell.GetSpellInfo(FISHING_SPELL_ID)
+    return info ~= nil and channelName == info.name
 end
 
 -- Keeps min <= max after any edit (options panel or slash command).
@@ -219,6 +230,8 @@ local function CanEmoteNow()
     if inCombat and not UnrefinedDB.allowInCombat then return false end
 
     if UnitIsDeadOrGhost("player") then return false end
+
+    if IsFishing() then return false end
 
     if UnitExists("target") and UnitIsPlayer("target") and not UnrefinedDB.allowWhilePlayerTargeted then
         return false
